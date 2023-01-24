@@ -1,8 +1,8 @@
 import json
 from django.http import JsonResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import render
 from .models import Item
-from .forms import ItemForm, UpdateItemForm
+from .forms import ItemForm
 from django.db.models import Q
 
 # Create your views here.
@@ -54,14 +54,11 @@ def search_item_view(request):
 
         name = request.GET.get("query")
         try:
-
-            status = Item.objects.filter(Q(name__icontains=name) | Q(description__icontains=name))
-
-            status = status.order_by("-id")
+            items = Item.objects.filter(Q(name__icontains=name) | Q(description__icontains=name))
+            items = items.order_by("-id")
             
         except:
-            status = None
-        print (status)
-        return render(request,"inventory/search.html",{"items":status})
+            items = None
+        return render(request,"inventory/search.html",{"items":items})
     else:
         return render(request,"inventory/search.html",{})
