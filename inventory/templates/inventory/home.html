@@ -1,0 +1,85 @@
+{% extends "inventory/layout.html" %}
+{% load static %}
+{% block title %}Home{% endblock %}
+
+{% block body %}
+
+    {% for item in items %}
+        <div class="card justify-content-center align-items-center shadow-lg rounded mb-2 mt-5" style="width: 40%">
+            <h5 class="card-header text-center" style="width: 100%"> {{ item.name }}</h5>
+            <div class="card-body d-flex justify-content-center align-items-center" style="width: 100%; flex-direction:column">
+              <h5 class="card-title">{{ item.description }} </h5>
+              <p class="card-text" id = "vquantity{{item.id}}">Quantity: {{ item.quantity }}</p>
+              <p class="card-text" id = "vprice{{item.id}}">Price: {{ item.price }}</p>
+              <a id= "editbtn{{item.id}}" href="#" class="btn btn-primary">Edit</a>
+              
+                <script>
+
+                    var editbtn{{item.id}} = document.getElementById("editbtn{{item.id}}");
+                    editbtn{{item.id}}.addEventListener("click", ()=>{
+                        editbtn{{item.id}}.innerHTML = editbtn{{item.id}}.innerHTML == "Edit" ? "Save" : "Edit";
+                        if (editbtn{{item.id}}.innerHTML == "Save"){
+                            
+                            const editform{{item.id}} = document.createElement('form');
+                            editform{{item.id}}.method = "POST";
+                            editform{{item.id}}.setAttribute('style', "min-width: 100%; display:flex; align-items: center; justify-content: center; flex-direction: column;");
+                            editform{{item.id}}.id = "editform{{item.id}}";
+                            const editprice{{item.id}} = document.createElement('input');
+                            editprice{{item.id}}.type = "text";
+                            editprice{{item.id}}.name = "price";
+                            editprice{{item.id}}.value = "{{ item.price }}";
+                            editprice{{item.id}}.setAttribute('style', "width: 100%; margin: 5px;");
+                            const editquantity{{item.id}} = document.createElement('input');
+                            editquantity{{item.id}}.type = "text";
+                            editquantity{{item.id}}.name = "quantity";
+                            editquantity{{item.id}}.value = "{{ item.quantity }}";
+                            editquantity{{item.id}}.setAttribute('style', "width: 100%; margin: 5px;");
+
+
+                            editform{{item.id}}.appendChild(editprice{{item.id}});
+                            editform{{item.id}}.appendChild(editquantity{{item.id}});
+                            editform{{item.id}}.appendChild(document.createElement('br'));
+
+                            editbtn{{item.id}}.parentNode.insertBefore(editform{{item.id}}, editbtn{{item.id}});
+
+
+                        }else{
+
+                            const editform{{item.id}} = document.getElementById("editform{{item.id}}");
+
+                            var price{{item.id}} = editform{{item.id}}.querySelector('input[name="price"]').value;
+                            const quantity{{item.id}} = editform{{item.id}}.querySelector('input[name="quantity"]').value;
+
+                            fetch("{% url 'update' item.id %}", {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                    "X-CSRFToken": "{{ csrf_token }}",
+                                },
+                                body: JSON.stringify({
+                                    "price": price{{item.id}},
+                                    "quantity": quantity{{item.id}}
+                                })
+                            }).then(response => response.json())
+                            .then((data) => {
+                                if (data.message.includes("success")){
+                                    editform{{item.id}}.parentNode.removeChild(editform{{item.id}});
+                                    editbtn{{item.id}}.innerHTML = "Edit";
+
+                                    var vprice{{item.id}} = document.getElementById("vprice{{item.id}}");
+                                    const vquantity{{item.id}} = document.getElementById("vquantity{{item.id}}");
+
+                                    vprice{{item.id}}.innerHTML = "Price: " + parseFloat(price{{item.id}}).toFixed(2);
+                                    vquantity{{item.id}}.innerHTML = "Quantity: " + quantity{{item.id}};
+
+                                }
+                            });
+                        }
+                    });
+
+                </script>
+            </div>
+          </div>
+    {% endfor %}
+
+{% endblock %}

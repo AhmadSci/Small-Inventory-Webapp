@@ -1,0 +1,69 @@
+{% extends "inventory/layout.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block title %}Add Item{% endblock %}
+
+{% block body %}
+<div class="row d-flex justify-content-center align-items-center h-custom shadow-lg rounded p-5" style="width:50%">
+    <div class="row d-flex justify-content-center align-items-center">
+
+            <form>
+                <!-- item name input -->
+                <div class="form-outline mb-4">
+                    {{ form.name|as_crispy_field }}
+                </div>
+
+                <div class="form-outline mb-3">
+                    {{ form.description|as_crispy_field }}
+                </div>
+
+                <!-- item quantity input -->
+                <div class="form-outline mb-3">
+                    {{ form.quantity|as_crispy_field }}
+                </div>
+
+                <!-- item price input -->
+                <div class="form-outline mb-2">
+                    {{ form.price|as_crispy_field }}
+                </div>
+
+                <div class="text-center text-lg-start mt-4 pt-2">
+                <button type="submit" class="btn btn-primary btn-lg"
+                    style="padding-left: 2.5rem; padding-right: 2.5rem;">Add item</button>
+                </div>
+
+            </form>
+        </div>
+
+</div>
+
+<script>
+    var form = document.querySelector('form');
+    document.addEventListener('DOMContentLoaded', () => {
+        form.onsubmit = (e) => {
+            e.preventDefault();
+                fetch('{% url 'add' %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({
+                        'name': form.name.value,
+                        'quantity': form.quantity.value,
+                        'price': form.price.value,
+                        'description': form.description.value
+                    })
+                }).then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                    if (data.message.includes('success')) {
+                        window.location.href = '{% url 'home' %}';
+                    }
+                });
+            }
+        });
+    
+</script>
+
+{% endblock %}
