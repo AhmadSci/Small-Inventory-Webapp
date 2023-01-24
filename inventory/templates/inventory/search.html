@@ -4,17 +4,23 @@
 
 {% block body %}
 
+<form id = "searchform" action = "{% url 'search' %}" method="GET">
+    <div class="input-group mb-3">
+      <input type="text" class="form-control" placeholder="Search" aria-label="query" name = "query">
+      {% csrf_token %}
+      <div class="input-group-append">
+        <button class="btn btn-outline-success" type="submit" id="button-addon2">Search</button>
+      </div>
+    </div>
+  </form>
+  {% if items %}
     {% for item in items %}
         <div class="card justify-content-center align-items-center shadow-lg rounded mb-2 mt-5" style="width: 40%">
             <h5 class="card-header text-center" style="width: 100%"> {{ item.name }}</h5>
             <div class="card-body d-flex justify-content-center align-items-center" style="width: 100%; flex-direction:column">
               <h5 class="card-title">{{ item.description }} </h5>
-              <div>
-                <p  style = "display:inline">Quantity: </p><p style = "display:inline" id = "vquantity{{item.id}}">{{ item.quantity }}</p>
-              </div>
-              <div class="m-2">
-                <p style = "display:inline">Price: </p><p style = "display:inline" id = "vprice{{item.id}}">{{ item.price }}</p>
-            </div>
+              <p class="card-text" id = "vquantity{{item.id}}">Quantity: {{ item.quantity }}</p>
+              <p class="card-text" id = "vprice{{item.id}}">Price: {{ item.price }}</p>
               <a id= "editbtn{{item.id}}" href="#" class="btn btn-primary">Edit</a>
               
                 <script>
@@ -23,9 +29,6 @@
                     editbtn{{item.id}}.addEventListener("click", ()=>{
                         editbtn{{item.id}}.innerHTML = editbtn{{item.id}}.innerHTML == "Edit" ? "Save" : "Edit";
                         if (editbtn{{item.id}}.innerHTML == "Save"){
-
-                            var vprice{{item.id}} = document.getElementById("vprice{{item.id}}").innerHTML;
-                            const vquantity{{item.id}} = document.getElementById("vquantity{{item.id}}").innerHTML;
                             
                             const editform{{item.id}} = document.createElement('form');
                             editform{{item.id}}.method = "POST";
@@ -34,12 +37,12 @@
                             const editprice{{item.id}} = document.createElement('input');
                             editprice{{item.id}}.type = "text";
                             editprice{{item.id}}.name = "price";
-                            editprice{{item.id}}.value = vprice{{item.id}};
+                            editprice{{item.id}}.value = "{{ item.price }}";
                             editprice{{item.id}}.setAttribute('style', "width: 100%; margin: 5px;");
                             const editquantity{{item.id}} = document.createElement('input');
                             editquantity{{item.id}}.type = "text";
                             editquantity{{item.id}}.name = "quantity";
-                            editquantity{{item.id}}.value = vquantity{{item.id}};
+                            editquantity{{item.id}}.value = "{{ item.quantity }}";
                             editquantity{{item.id}}.setAttribute('style', "width: 100%; margin: 5px;");
 
 
@@ -76,8 +79,8 @@
                                     var vprice{{item.id}} = document.getElementById("vprice{{item.id}}");
                                     const vquantity{{item.id}} = document.getElementById("vquantity{{item.id}}");
 
-                                    vprice{{item.id}}.innerHTML = parseFloat(price{{item.id}}).toFixed(2);
-                                    vquantity{{item.id}}.innerHTML = quantity{{item.id}};
+                                    vprice{{item.id}}.innerHTML = "Price: " + parseFloat(price{{item.id}}).toFixed(2);
+                                    vquantity{{item.id}}.innerHTML = "Quantity: " + quantity{{item.id}};
 
                                 }
                             });
@@ -88,5 +91,6 @@
             </div>
           </div>
     {% endfor %}
+    {% endif %}
 
 {% endblock %}

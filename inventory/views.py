@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from .models import Item
 from .forms import ItemForm, UpdateItemForm
+from django.db.models import Q
 
 # Create your views here.
 
@@ -48,8 +49,19 @@ def update_item_view(request, id):
         except:
             return JsonResponse({"error": "Invalid data"}, status=400)
 
-def delete_item_view(request, id):
-    pass
+def search_item_view(request):
+    if request.method == "GET":
 
-def remove_item_view(request):
-    pass
+        name = request.GET.get("query")
+        try:
+
+            status = Item.objects.filter(Q(name__icontains=name) | Q(description__icontains=name))
+
+            status = status.order_by("-id")
+            
+        except:
+            status = None
+        print (status)
+        return render(request,"inventory/search.html",{"items":status})
+    else:
+        return render(request,"inventory/search.html",{})

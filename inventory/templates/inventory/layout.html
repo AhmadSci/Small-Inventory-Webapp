@@ -27,15 +27,20 @@
             <div>
               <ul class="navbar-nav mt-3">
             
+                  <li class="nav-item">
+                      <a class="nav-link" href="{% url 'home' %}">Home Page</a>
+                  </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'add' %}">Add Item</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'remove' %}">Remove Item</a>
+                        <a class="nav-link" href="{% url 'search' %}">Search</a>
                     </li>
                     {% comment %} <li class="nav-item">
                         <a class="nav-link" href="{% url 'search' %}">Search</a>
                     </li> {% endcomment %}
+                    {% block search %}
+                    {% endblock %}
 
               </ul>
             </div>
