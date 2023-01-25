@@ -37,7 +37,7 @@ DATABASES = {
     }
 }
 ```
-in the [settings.py](/Small-Inventory-Webapp/SmallInventoryWebapp/settings.py) folder
+in the [settings.py](https://github.com/AhmadSci/Small-Inventory-Webapp/blob/main/SmallInventoryWebapp/settings.py) folder
 
 3- Create a virtual environment and activate it 
 ```bash
